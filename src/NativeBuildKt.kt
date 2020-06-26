@@ -4,7 +4,7 @@ import java.lang.Runtime
 
 fun main(args : Array<String>) {
     val TESTING = false // enable to stop building when testing new features
-    val VERSION = "1.0.0rc1" // TODO: for future update, to check for new major releases on GitHub
+    val VERSION = "1.0.0rc2" // TODO: for future update, to check for new major releases on GitHub
 
     var run = false
     var destExists = false
@@ -37,7 +37,7 @@ fun main(args : Array<String>) {
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
 
     if (!nativeDestDir.exists()) {
-        println("A new version of Kotlin-Native should be available!")
+        println("A new version of Kotlin/Native should be available!")
         println("Do you want to install? (Y/N)")
         val answer : String = readLine()!!
         if (answer == "Y" || answer == "y") run = true
@@ -52,6 +52,8 @@ fun main(args : Array<String>) {
     if (run) {
         if (!TESTING) {
             println("\n--- These steps usually take a while, please wait. ---\n")
+
+            // TODO: add progress bar
 
             // downloads .zip file from source
             println("Downloading from ${targetURL}...")
@@ -96,6 +98,14 @@ fun main(args : Array<String>) {
                 p5.waitFor()
             }
 
+            // creates bat file if it doesn't exist and returns true
+            val newBatFile = batFile.createNewFile()
+
+            if (newBatFile) {
+                println("Creating executable native-build.bat file")
+                batFile.appendText("@echo off\njava -jar $jarFile")
+            }
+
             /* adding to path */
 
             println("Removing outdated paths if they exist...")
@@ -110,7 +120,7 @@ fun main(args : Array<String>) {
             p6.waitFor()
 
             // adds new kotlin-native variable to path
-            println("Adding new kotlin-native version to path...")
+            println("Adding new Kotlin/Native version to path...")
             val p7_c = arrayOf(
                 "powershell.exe", "-Command",
                 "\"[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User')  + ';${nativeDestDirString}\\bin', 'User')\""
@@ -126,14 +136,6 @@ fun main(args : Array<String>) {
             )
             val p8: Process = Runtime.getRuntime().exec(p8_c)
             p8.waitFor()
-
-            // creates bat file if it doesn't exist and returns true
-            val newBatFile = batFile.createNewFile()
-
-            if (newBatFile) {
-                println("Creating executable native-build.bat file")
-                batFile.appendText("@echo off\njava -jar $jarFile")
-            }
 
             // ending statements
             println("\nIf a previous installation exists, it will not have been uninstalled, but it may have been removed from user path.")
