@@ -33,7 +33,7 @@ fun main(args : Array<String>) {
     val batFile = File(batFileString)
 
 
-    println("Running native-build v$VERSION")
+    println("Running Kotlin/Native Builder v$VERSION")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
 
     if (!nativeDestDir.exists()) {
