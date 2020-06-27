@@ -2,6 +2,7 @@ package com.nativebuild
 
 import java.io.File
 
+
 object Build {
 
     // TODO: Add documentation for functions and build object
@@ -53,7 +54,7 @@ object Build {
         "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip")
 
     fun removeOldInstallation() = runTemplate("Deleting previous installation...",
-                "Remove-Item $nativeDestDirString -Recurse")
+            "Remove-Item $nativeDestDirString -Recurse")
 
     fun extractZip() = runTemplate("Extracting files from .zip file...",
         "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force")
@@ -75,6 +76,7 @@ object Build {
 
     /**
      * Removes pre-existing kotlin-native variables from path.
+     *
      * Thanks to Chris Dent's answer here:
      * https://stackoverflow.com/questions/39010405/powershell-how-to-delete-a-path-in-the-path-environment-variable
      */
