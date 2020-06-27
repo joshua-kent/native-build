@@ -6,16 +6,26 @@ fun main(args: Array<String>) {
 
     println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
+    println("Type 'info' at any input prompt to show more information about this utility.")
+    println("Type 'license' at any input prompt to show this product's license.")
 
     if (!Build.nativeDestDir.exists()) {
         println("A new version of Kotlin/Native should be available!")
-        println("Do you want to install? (Y/N/info)")
+        println("Do you want to install?")
+        println("- Yes")
+        println("- No")
+        println("- Info")
+        println("- License\n")
         val answer : String = readLine()!!
         if (answer == "Y" || answer == "y") run = true
         // todo add 'info' option
 
     } else {
-        println("You are up-to-date. Do you want to force re-install anyway? (Y/N)")
+        println("You are up-to-date. Do you want to force re-install anyway?")
+        println("- Yes")
+        println("- No")
+        println("- Info")
+        println("- License\n")
         val answer : String = readLine()!!
         destExists = true
         if (answer == "Y" || answer == "y") run = true
