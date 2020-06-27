@@ -1,7 +1,12 @@
 import com.nativebuild.Build
 import com.nativebuild.Menu
+import com.nativebuild.Info
+import com.nativebuild.License
+
 
 fun main(args: Array<String>) {
+
+    val mainMenu = Menu()
     var run = false
     var destExists = false
 
@@ -11,25 +16,33 @@ fun main(args: Array<String>) {
     println("Type 'license' at any input prompt to show this product's license.")
 
     if (!Build.nativeDestDir.exists()) {
-        println("A new version of Kotlin/Native should be available!")
-        println("Do you want to install?")
-        println("- Yes")
-        println("- No")
-        println("- Info")
-        println("- License\n")
-        val answer : String = readLine()!!
-        if (answer == "Y" || answer == "y") run = true
-        // todo add 'info' option
+        val answer = mainMenu.prompt(
+                "A new version of Kotlin/Native should be available!",
+                arrayOf("Yes", "No", "Info", "License")
+        )
 
+        when (answer?.toLowerCase()) {
+            in arrayOf("y", "yes") -> run = true
+            in arrayOf("n", "no") -> System.exit(0)
+            "info" -> System.exit(0) // TODO
+            "license" -> System.exit(0) // TODO
+            else -> System.exit(0) // TODO
+        }
     } else {
-        println("You are up-to-date. Do you want to force re-install anyway?")
-        println("- Yes")
-        println("- No")
-        println("- Info")
-        println("- License\n")
-        val answer : String = readLine()!!
+        val answer = mainMenu.prompt(
+                "You are up-to-date. Do you want to force re-install anyway?",
+                arrayOf("Yes", "No", "Info", "License")
+        )
+
+        when (answer?.toLowerCase()) {
+            in arrayOf("y", "yes") -> run = true
+            in arrayOf("n", "no") -> System.exit(0)
+            "info" -> System.exit(0) // TODO
+            "license" -> System.exit(0) // TODO
+            else -> System.exit(0) // TODO
+        }
+
         destExists = true
-        if (answer == "Y" || answer == "y") run = true
     }
 
     if (run) {

@@ -2,7 +2,6 @@ package com.nativebuild
 
 import java.io.File
 
-
 object Build {
 
     // TODO: Add documentation for functions and build object
