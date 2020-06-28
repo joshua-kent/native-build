@@ -33,7 +33,7 @@ installed (the program will be installed in
 `C:\kotlin-native` and added to path anyway):
 ```$powershell
 cd ~
-ri
+ri native-build -recurse -force
 ```
 
 How to use
