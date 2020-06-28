@@ -18,8 +18,6 @@ package com.nativebuild
 
 import com.nativebuild.util.Build
 import com.nativebuild.util.Menu
-import com.nativebuild.util.Info
-import com.nativebuild.util.License
 
 
 fun main(args: Array<String>) {
@@ -31,19 +29,19 @@ fun main(args: Array<String>) {
     println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
     println("Type 'info' at any input prompt to show more information about this utility.")
-    println("Type 'license' at any input prompt to show this product's license.")
+    println("Type 'license' at any input prompt to show this product's license.\n")
 
     if (!Build.nativeDestDir.exists()) {
         val answer = mainMenu.prompt(
-                "A new version of Kotlin/Native should be available!",
+                "A new version of Kotlin/Native should be available!\nDo you want to update?",
                 arrayOf("Yes", "No", "Info", "License")
         )
 
         when (answer?.toLowerCase()) {
             in arrayOf("y", "yes") -> run = true
             in arrayOf("n", "no") -> System.exit(0)
-            "info" -> System.exit(0) // TODO
-            "license" -> License.displayLicense()
+            "info" -> com.nativebuild.util.displayInfo()
+            "license" -> com.nativebuild.util.displayLicense()
             else -> System.exit(0) // TODO
         }
     } else {
@@ -55,8 +53,8 @@ fun main(args: Array<String>) {
         when (answer?.toLowerCase()) {
             in arrayOf("y", "yes") -> run = true
             in arrayOf("n", "no") -> System.exit(0)
-            "info" -> System.exit(0) // TODO
-            "license" -> License.displayLicense()
+            "info" -> com.nativebuild.util.displayInfo()
+            "license" -> com.nativebuild.util.displayLicense()
             else -> System.exit(0) // TODO
         }
 
@@ -84,6 +82,7 @@ fun main(args: Array<String>) {
             // creates bat file if it doesn't exist and returns true
             Build.appendToBatFile()
 
+
             /* adding to path */
 
             Build.removeOldVersionPaths()
@@ -99,4 +98,7 @@ fun main(args: Array<String>) {
             println("If you want to run native-build again, run 'native-build' in the command line (this will only work after restart)")
         }
     }
+
+    System.exit(0)
+    // to avoid menu -> license -> menu -> license -> yes, completing then returning to first menu screen.
 }

@@ -13,34 +13,32 @@ that is mainstreamed across the entire project.
 
 ---
 
-### `com.nativebuild.util.Build` class
+### `com.nativebuild.util.displayLicense()`
 
-- Added documenation for `Build` class.
-
----
-
-### `com.nativebuild.util.License` class
-
-- Created class and its main function,
-`displayLicense()`, which displays the license
-and waits for user input to then return to the
-`main()` function.
+- Created `displayLicense()`, which displays the
+license and waits for user input to then return to
+the `main()` function.
 
 ---
 
-### `com.nativebuild.util.Info` class
+### `com.nativebuild.util.displayInfo()`
 
-- coming soon
+- Created `displayInfo()`, which displays
+information about this utility and waits for user
+input to return to the `main()` function.
 
---
+---
 
-### `main` function
+### `com.nativebuild.main()`
 
 - Added 'info' menu option.
 - Added 'license' menu option.
 - Changed menus into `com.nativebuild.util.Build`
 objects.
 - Moved to package `com.nativebuild`
+- Menu when a new version is available has been
+changed to directly ask the question before the
+options.
 
 ---
 
@@ -55,3 +53,14 @@ versions.
 `com.nativebuild` are now in
 `com.nativebuild.util`.
 - Added short license into files as a comment.
+- Full version info is now displayed as
+`[version] at [day month year] [time] [UTC+n]`,
+rather than `[version] [time] [day month year]`
+- Renamed repository to 'native-build'.
+
+### Bugfixes
+
+- Fixed bug where you could possibly nest
+`main()` functions, which would cause the
+program to continue even after you ran the
+utility.

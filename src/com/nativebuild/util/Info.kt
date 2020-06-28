@@ -16,6 +16,30 @@
 
 package com.nativebuild.util
 
-object Info {
+fun displayInfo() {
+    println("""
+        
+        Kotlin/Native Builder
+        ---------------------
+        
+        Kotlin/Native Builder is a non-official utility for easily
+        building the Kotlin/Native compiler and setting it up for
+        immediate use without hassle.
+        
+        After you have built for the first time with this utility, you
+        will be able to call 'native-build' in the command line to run
+        again.
+        
+        Created by ${com.nativebuild.AUTHOR}.
+        Version ${com.nativebuild.FULLVERSION}.
+        Source code is available at ${com.nativebuild.REPO}.
+        
+        For license information, either see the 'LICENSE' file in the
+        file containing the source code, or type 'license' in any menu
+        screen while running this utility.
+    """.trimIndent())
 
+    readLine()
+    println("\n----------------------------------------------------------------\n\n")
+    com.nativebuild.main(arrayOf("Kotlin"))
 }

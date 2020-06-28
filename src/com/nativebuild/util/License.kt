@@ -16,11 +16,9 @@
 
 package com.nativebuild.util
 
-object License {
-    fun displayLicense() {
-        println(com.nativebuild.LICENSE)
-        readLine()
-        println("----------------------------------------------------------------\n\n")
-        com.nativebuild.main(arrayOf("Kotlin"))
-    }
+fun displayLicense() {
+    println(com.nativebuild.LICENSE)
+    readLine()
+    println("----------------------------------------------------------------\n\n")
+    com.nativebuild.main(arrayOf("Kotlin"))
 }

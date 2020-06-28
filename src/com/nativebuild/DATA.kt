@@ -16,15 +16,16 @@
 
 package com.nativebuild
 
-const val VERSION = "1.0.0rc5-PRE4"  // TODO: for future update, to check for new major releases on GitHub
+const val VERSION = "1.0.0rc5"  // TODO: for future update, to check for new major releases on GitHub
 object LastUpdated {
-    const val TIME = "22:36"
-    const val DATE = "27 June 2020"
-    const val FULL = "$TIME $DATE"
+    const val DATE = "28 June 2020"
+    const val TIME = "16:34 UTC+1"
+    const val FULL = "$DATE $TIME"
 }
-const val FULLVERSION = "$VERSION ${LastUpdated.FULL}"
+const val FULLVERSION = "$VERSION at ${LastUpdated.FULL}"
 const val AUTHOR = "Joshua Kent"
 const val TESTING = false // enable to stop building when testing
+const val REPO = "https://github.com/joshua-kent/native-build"
 const val LICENSE = """                                 Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

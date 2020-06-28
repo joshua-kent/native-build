@@ -19,11 +19,11 @@ Install and run
 Install from GitHub:
 ```powershell
 cd ~
-git clone https://github.com/joshua-kent/build-native.git
+git clone https://github.com/joshua-kent/native-build.git
 ```
 Run program:
 ```powershell
-cd build-native\out\artifacts\native_build_jar
+cd native-build\out\artifacts\native_build_jar
 java -jar native-build.jar
 ```
 
