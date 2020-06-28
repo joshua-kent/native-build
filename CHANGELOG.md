@@ -1,6 +1,29 @@
 Changelog
 ===
 
+Version 1.0.0
+---
+
+- Entering invalid input now asks to try again
+instead of exiting the utility.
+- Downloads and extractions that take time now use
+a progress bar to display how much they have progressed.
+
+### `com.nativebuild.startMenu()`
+
+- New function to handle the start menu, rather
+than being included inside of
+`com.nativebuild.main()`.
+- Added documentation.
+
+### `com.nativebuild.main()`
+
+- Added documentation.
+
+### `com.nativebuild.progressBar()`
+
+- Creates a progress bar.
+
 Version 1.0.0rc5.2
 ---
 

@@ -17,6 +17,9 @@
 package com.nativebuild.util
 
 import java.io.File
+import java.io.IOException
+import java.net.URL
+import java.util.zip.ZipFile
 
 /**
  * Contains variables and information to do with building Kotlin/Native.
@@ -58,23 +61,35 @@ object Build {
      *
      * @param comment What to output while running command
      * @param command What to run (as PowerShell command)
+     * @param waitFor Set to `true` to wait for the process to end
+     * before continuing. (default: `true`)
      * @author Joshua Kent
      */
-    private fun runTemplate(comment: String, command: String) {
-        // TODO: add progress bar functionality
+    private fun runTemplate(comment: String, command: String, waitFor: Boolean = true): Process {
         println(comment)
         val commandArr = arrayOf("powershell.exe", "-Command", "\"" + command + "\"")
         val proc = this.javaRuntime.exec(commandArr)
-        proc.waitFor()
+        if (waitFor) proc.waitFor()
+        return proc
     }
 
     /**
      * Downloads the .zip file from source.
      *
+     * Thanks to reflog & Cristian's answer here:
+     * https://stackoverflow.com/questions/2983073/how-to-know-the-size-of-a-file-before-downloading-it
+     *
      * @author Joshua Kent
      */
-    fun downloadZip() = runTemplate("Downloading from $targetURL...",
-        "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip")
+    fun downloadZip() {
+        val urlConnection = URL(targetURL).openConnection()
+        urlConnection.connect()
+        val urlFileSize = urlConnection.contentLengthLong
+
+        val proc = runTemplate("Downloading from $targetURL...",
+                "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip", false)
+        progressBar(proc, "$nativeDestDirString.zip", urlFileSize)
+    }
 
     /**
      * Removes the previous installation of Kotlin/Native (if it is identical to the current version).
@@ -82,23 +97,44 @@ object Build {
      * @author Joshua Kent
      */
     fun removeOldInstallation() = runTemplate("Deleting previous installation...",
-            "Remove-Item $nativeDestDirString -Recurse")
+                "Remove-Item $nativeDestDirString -Recurse")
 
     /**
      * Extracts the .zip file that has been downloaded from the source.
      *
      * @author Joshua Kent
      */
-    fun extractZip() = runTemplate("Extracting files from .zip file...",
-        "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force")
+    fun extractZip() {
+        val proc = runTemplate("Extracting files from .zip file...",
+                "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force",
+        false)
+
+        // get size of zip file if uncompressed
+        var uncompressedZipSize: Long = 0
+        val zipFile = ZipFile("$nativeDestDirString.zip")
+        val enum = zipFile.entries()
+        try {
+            while (enum.hasMoreElements()) {
+                val zipEntry = enum.nextElement()
+                uncompressedZipSize += zipEntry.size
+            }
+        } catch (exc: IOException) {
+            error(exc)
+        }
+
+        progressBar(proc, nativeDestDirString, uncompressedZipSize)
+    }
 
     /**
      * Deletes the .zip file that has been downloaded from the source.
      *
      * @author Joshua Kent
      */
-    fun deleteZip() = runTemplate("Deleting temporary .zip file...",
-        "Remove-Item $nativeDestDirString.zip")
+    fun deleteZip() {
+        val proc = runTemplate("Deleting temporary .zip file...",
+                "Remove-Item $nativeDestDirString.zip", false)
+        progressBar(proc, "$nativeDestDirString.zip", nativeDestDir.length(), reverse = true)
+    }
 
     /**
      * Adds the current utility into path if the current runtime
@@ -135,7 +171,7 @@ object Build {
      *
      * @author Joshua Kent
      */
-    fun removeOldVersionPaths() = runTemplate("Removing outdated paths if they exists...",
+    fun removeOldVersionPaths() = runTemplate("Removing outdated paths if they exist...",
         "[Environment]::SetEnvironmentVariable('Path', (([Environment]::GetEnvironmentVariable('Path', 'User').Split(';') -NotMatch '$nDDVS_ps1') -Join ';'), 'User')")
 
     /**

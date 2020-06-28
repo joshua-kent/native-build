@@ -18,48 +18,64 @@ package com.nativebuild
 
 import com.nativebuild.util.Build
 import com.nativebuild.util.Menu
+import kotlin.system.exitProcess
 
-
-fun main(args: Array<String>) {
-
+/**
+ * Displays the start menu for the utility and returns whether to
+ * run or not.
+ *
+ * @param redoing Should be left alone to default (`false`); displays
+ * 'invalid output and try again' if `true`. (default: `false`)
+ * @author Joshua Kent
+ */
+fun startMenu(redoing: Boolean = false): Boolean {
     val mainMenu = Menu()
     var run = false
-    var destExists = false
+    val answer: String?
+
+    if (!redoing) {
+        answer = if (!Build.nativeDestDir.exists()) {
+            mainMenu.prompt(
+                    "A new version of Kotlin/Native should be available!\nDo you want to update?",
+                    arrayOf("Yes", "No", "Info", "License")
+            )
+        } else {
+            mainMenu.prompt(
+                    "You are up-to-date. Do you want to force re-install anyway?",
+                    arrayOf("Yes", "No", "Info", "License")
+            )
+        }
+    } else {
+        println("Invalid input; please try again.")
+        answer = mainMenu.getInput()
+    }
+
+    when (answer?.toLowerCase()) {
+        in arrayOf("y", "yes") -> run = true
+        in arrayOf("n", "no") -> exitProcess(0)
+        "info" -> com.nativebuild.util.displayInfo()
+        "license" -> com.nativebuild.util.displayLicense()
+        else -> startMenu(true)
+    }
+
+    return run
+}
+
+/**
+ * The main function where the application is run from.
+ *
+ * @param args For internal usage to be recognised by Java.
+ * @author Joshua Kent
+ */
+fun main(args: Array<String>) {
+    var destExists = Build.nativeDestDir.exists()
 
     println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
     println("Type 'info' at any input prompt to show more information about this utility.")
     println("Type 'license' at any input prompt to show this product's license.\n")
 
-    if (!Build.nativeDestDir.exists()) {
-        val answer = mainMenu.prompt(
-                "A new version of Kotlin/Native should be available!\nDo you want to update?",
-                arrayOf("Yes", "No", "Info", "License")
-        )
-
-        when (answer?.toLowerCase()) {
-            in arrayOf("y", "yes") -> run = true
-            in arrayOf("n", "no") -> System.exit(0)
-            "info" -> com.nativebuild.util.displayInfo()
-            "license" -> com.nativebuild.util.displayLicense()
-            else -> System.exit(0) // TODO
-        }
-    } else {
-        val answer = mainMenu.prompt(
-                "You are up-to-date. Do you want to force re-install anyway?",
-                arrayOf("Yes", "No", "Info", "License")
-        )
-
-        when (answer?.toLowerCase()) {
-            in arrayOf("y", "yes") -> run = true
-            in arrayOf("n", "no") -> System.exit(0)
-            "info" -> com.nativebuild.util.displayInfo()
-            "license" -> com.nativebuild.util.displayLicense()
-            else -> System.exit(0) // TODO
-        }
-
-        destExists = true
-    }
+    val run = startMenu()
 
     if (run) {
         if (!com.nativebuild.TESTING) {
@@ -99,6 +115,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    System.exit(0)
+    exitProcess(0)
     // to avoid menu -> license -> menu -> license -> yes, completing then returning to first menu screen.
 }

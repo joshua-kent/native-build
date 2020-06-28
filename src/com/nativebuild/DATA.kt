@@ -16,10 +16,10 @@
 
 package com.nativebuild
 
-const val VERSION = "1.0.0rc5.2"  // TODO: for future update, to check for new major releases on GitHub
+const val VERSION = "1.0.0"
 object LastUpdated {
-    const val DATE = "28 June 2020"
-    const val TIME = "18:59 UTC+1"
+    const val DATE = "29 June 2020"
+    const val TIME = "00:22 UTC+1"
     const val FULL = "$DATE $TIME"
 }
 const val FULLVERSION = "$VERSION at ${LastUpdated.FULL}"
