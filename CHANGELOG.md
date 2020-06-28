@@ -1,7 +1,14 @@
 Changelog
 ===
 
-Version 1.0.0rc5 (IN-PROGRESS)
+Version 1.0.0rc5.1
+---
+
+- Removed '(IN-PROGRESS)' from '1.0.0rc5' in
+changelog.
+
+
+Version 1.0.0rc5
 ---
 
 ### `com.nativebuild.util.Menu` class
