@@ -16,7 +16,16 @@
 
 package com.nativebuild.util
 
-class Menu(query: String? = null, options: Array<String> = arrayOf()) {
+/**
+ * Contains functions that allow you to create a standardised
+ * menu screen with a query and responses, and the ability to
+ * see history of all queries and responses (given the same
+ * object).
+ *
+ *
+ * @author Joshua Kent
+ */
+class Menu() {
 
     private var lastInput: String? = null //input
     private var lastShow: Pair<String?, Array<String>>? = null // [query, options]
@@ -28,6 +37,18 @@ class Menu(query: String? = null, options: Array<String> = arrayOf()) {
     private var setMenuHistory: MutableList<Pair<String?, Array<String>>?> = mutableListOf() // [[query, options], ...]
     private var promptHistory: MutableList<Pair<Pair<String?, Array<String>>, String?>?> = mutableListOf() // [[[query, options], input], ...]
 
+    /**
+     * Asks the user a question, displays options, waits for input then returns their
+     * input.
+     *
+     * The query, options and input are added to the prompt history.
+     *
+     * @param query What will be asked to the user.
+     * @param options An array of what the options will be for the user to choose.
+     * @return The user's input, (if the user did not enter anything and just
+     * clicked enter, `null` will be returned).
+     * @author Joshua Kent
+     */
     fun prompt(query: String?, options: Array<String>): String? {
         if (query != null) println(query + "\n")
         println("Options:")
@@ -45,6 +66,16 @@ class Menu(query: String? = null, options: Array<String> = arrayOf()) {
         return lastInput
     }
 
+    /**
+     * Shows whatever was last set with `setMenu()`
+     *
+     * The query and answer is added to the last show history.
+     *
+     * @return If the function was successful, `true` is returned.
+     * If not (such as nothing being ever set with the `setMenu` function,
+     * then `false` is returned.
+     * @author Joshua Kent
+     */
     fun show(): Boolean {
         val lastSetMenuCopy = lastSetMenu
         if (lastSetMenuCopy != null) {
@@ -65,6 +96,13 @@ class Menu(query: String? = null, options: Array<String> = arrayOf()) {
         return true
     }
 
+    /**
+     * Asks for the user's input.
+     *
+     * @return If the user inputted something, it is returned.
+     * If they only pressed enter, `null` is returned.
+     * @author Joshua Kent
+     */
     fun getInput(): String? {
         print(": ")
         lastInput = readLine()!!
@@ -75,40 +113,98 @@ class Menu(query: String? = null, options: Array<String> = arrayOf()) {
         return lastInput
     }
 
+    /**
+     * Sets a new menu's query and options to be shown with `show()`.
+     *
+     * The menu is added to the set menu history.
+     *
+     * @param query What will be asked to the user.
+     * @param options An array of what the options will be for the user to choose.
+     * @author Joshua Kent
+     */
     fun setMenu(query: String?, options: Array<String>) {
         lastSetMenu = Pair(query, options)
         setMenuHistory.add(lastSetMenu)
     }
 
 
+    /**
+     * @return What was last inputted with `getInput()` OR `prompt()`.
+     * @author Joshua Kent
+     */
     fun lastInput() = lastInput
 
+    /**
+     * @return What was last shown with `show()`.
+     * @author Joshua Kent
+     */
     fun lastShow() = lastShow
 
+    /**
+     * @return What menu was last set with `setMenu()`.
+     * @author Joshua Kent
+     */
     fun lastSetMenu() = lastSetMenu
 
+    /**
+     * @return Returns what was last asked, the options and the user's input with `prompt()`,
+     * as `((query, options), input)`.
+     * @author Joshua Kent
+     */
     fun lastPrompt() = lastPrompt
 
 
+    /**
+     * @return Everything that the user has inputted with `getInput()` OR `prompt()`.
+     * @author Joshua Kent
+     */
     fun getInputHistory() = getInputHistory
 
+    /**
+     * @return Every menu that has been displayed with `show()`.
+     * @author Joshua Kent
+     */
     fun showHistory() = showHistory
 
+    /**
+     * @return Every menu that has been set with `setMenu()`.
+     * @author Joshua Kent
+     */
     fun setMenuHistory() = setMenuHistory
 
+    /**
+     * @return The query, options and input from every `prompt()`.
+     * @author Joshua Kent
+     */
     fun promptHistory() = promptHistory
 
 
+    /**
+     * Clears the input history (from `getInput()` OR `prompt()`).
+     *
+     * @author Joshua Kent
+     */
     fun clearGetInputHistory() { getInputHistory = mutableListOf() }
 
+    /**
+     * Clears the show history (from `show()`).
+     *
+     * @author Joshua Kent
+     */
     fun clearShowHistory() { showHistory = mutableListOf() }
 
+    /**
+     * Clears the set menu history (from `setMenu()`).
+     *
+     * @author Joshua Kent
+     */
     fun clearSetMenuHistory() { setMenuHistory = mutableListOf() }
 
+    /**
+     * Clears the prompt history (from `prompt()`).
+     *
+     * @author Joshua Kent
+     */
     fun clearPromptHistory() { promptHistory = mutableListOf() }
-
-
-
-    init { if (query != null || options.isNotEmpty()) prompt(query, options) }
 
 }

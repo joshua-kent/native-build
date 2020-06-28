@@ -16,6 +16,12 @@
 
 package com.nativebuild.util
 
+/**
+ * Displays information about the native-build utility,
+ * then waits for user input to exit out of the function.
+ *
+ * @author Joshua Kent
+ */
 fun displayInfo() {
     println("""
         

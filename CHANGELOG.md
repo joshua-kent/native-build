@@ -1,6 +1,13 @@
 Changelog
 ===
 
+Version 1.0.0rc5.2
+---
+
+- Added documentation in source code.
+- Removed initialiser from `com.nativebuild.Menu`
+class to avoid non-intuitive behaviour.
+
 Version 1.0.0rc5.1
 ---
 

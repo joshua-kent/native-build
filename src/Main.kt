@@ -77,7 +77,7 @@ fun main(args: Array<String>) {
             Build.deleteZip()
 
             // adding .jar file to C:\kotlin-native
-            if (Build.jarPath != Build.jarFile) Build.addJarToPath()
+            Build.addJarToPath()
 
             // creates bat file if it doesn't exist and returns true
             Build.appendToBatFile()

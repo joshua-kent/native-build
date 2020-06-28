@@ -16,6 +16,12 @@
 
 package com.nativebuild.util
 
+/**
+ * Displays the license information of the `native-build` utility, then
+ * waits for user input to continue.
+ *
+ * @author Joshua Kent
+ */
 fun displayLicense() {
     println(com.nativebuild.LICENSE)
     readLine()

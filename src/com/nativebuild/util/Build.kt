@@ -18,32 +18,35 @@ package com.nativebuild.util
 
 import java.io.File
 
+/**
+ * Contains variables and information to do with building Kotlin/Native.
+ *
+ * @author Joshua Kent
+ */
 object Build {
 
-    // TODO: Add documentation for functions and build object
-
-    // path of main directory
-    val nativeDirString = "C:\\kotlin-native"
-    // used as a template for installation place
-    val nativeDestDirVersionlessString = "${nativeDirString}\\kotlin-native-windows-"
-    // same as above, but able to be used as regex string with Powershell
-    val nDDVS_ps1 = "C:\\\\kotlin-native\\\\kotlin-native-windows-" //
-    // where kotlin native will be installed
-    val nativeDestDirString = "${nativeDestDirVersionlessString}${KotlinVersion.CURRENT}"
-    // used to check if the current installation is installed
-    val nativeDestDir = File(nativeDestDirString)
-    // the .jar file to be included to be used by path
-    val jarFile = "${nativeDirString}\\native-build.jar"
-    // URL to download from
-    val targetURL = "https://github.com/JetBrains/kotlin/releases/download/v${KotlinVersion.CURRENT}/kotlin-native-windows-${KotlinVersion.CURRENT}.zip"
-    // current path of .jar file
-    var jarPath = object {}.javaClass.protectionDomain.codeSource.location.toURI().path
-    // path of .bat file in path
-    val batFileString = "${nativeDirString}\\native-build.bat"
-    // as java file to be manipulated
-    val batFile = File(batFileString)
-    // current java runtime, used to call start processes
-    val javaRuntime : Runtime = Runtime.getRuntime()
+    /** The path where Kotlin/Native and this utility will be stored. */
+    private const val nativeDirString = "C:\\kotlin-native"
+    /** Used as a template for where Kotlin/Native will be installed. */
+    private const val nativeDestDirVersionlessString = "${nativeDirString}\\kotlin-native-windows-"
+    /** The same as `nativeDestDirVersionlessString` but compatible with regex.*/
+    private const val nDDVS_ps1 = "C:\\\\kotlin-native\\\\kotlin-native-windows-" //
+    /** The path where Kotlin/Native will be installed. */
+    private val nativeDestDirString = "${nativeDestDirVersionlessString}${KotlinVersion.CURRENT}"
+    /** The same as `nativeDestDirString`, but as a `java.io.File` object. */
+    val nativeDestDir = File(nativeDestDirString) // not private as used by main()
+    /** The path where this utility will be installed and visible to path. */
+    private const val jarFile = "${nativeDirString}\\native-build.jar"
+    /** The URL where Kotlin/Native will be downloaded from. */
+    private val targetURL = "https://github.com/JetBrains/kotlin/releases/download/v${KotlinVersion.CURRENT}/kotlin-native-windows-${KotlinVersion.CURRENT}.zip"
+    /** The current path of the utility, to know whether to copy it into `C:\kotlin-native`. */
+    private var jarPath = object {}.javaClass.protectionDomain.codeSource.location.toURI().path
+    /** The path of the batch file that allows `native-build` to be executed from the command line. */
+    private const val batFileString = "${nativeDirString}\\native-build.bat"
+    /** The same as `batFileString`, but as a `java.io.File` object. */
+    private val batFile = File(batFileString)
+    /** Accesses the current Java runtime, which can be used to run processes.*/
+    private val javaRuntime = Runtime.getRuntime()
 
     init {
         if (jarPath.startsWith('/')) jarPath = jarPath.drop(1)
@@ -51,10 +54,11 @@ object Build {
     }
 
     /**
-     * Runs a PowerShell command from runtime
+     * Runs a PowerShell command from runtime (this does not print any output).
      *
      * @param comment What to output while running command
-     * @param command What to run (as PowerShell)
+     * @param command What to run (as PowerShell command)
+     * @author Joshua Kent
      */
     private fun runTemplate(comment: String, command: String) {
         // TODO: add progress bar functionality
@@ -64,22 +68,56 @@ object Build {
         proc.waitFor()
     }
 
-    /**Downloads .zip file from source.*/
+    /**
+     * Downloads the .zip file from source.
+     *
+     * @author Joshua Kent
+     */
     fun downloadZip() = runTemplate("Downloading from $targetURL...",
         "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip")
 
+    /**
+     * Removes the previous installation of Kotlin/Native (if it is identical to the current version).
+     *
+     * @author Joshua Kent
+     */
     fun removeOldInstallation() = runTemplate("Deleting previous installation...",
             "Remove-Item $nativeDestDirString -Recurse")
 
+    /**
+     * Extracts the .zip file that has been downloaded from the source.
+     *
+     * @author Joshua Kent
+     */
     fun extractZip() = runTemplate("Extracting files from .zip file...",
         "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force")
 
+    /**
+     * Deletes the .zip file that has been downloaded from the source.
+     *
+     * @author Joshua Kent
+     */
     fun deleteZip() = runTemplate("Deleting temporary .zip file...",
         "Remove-Item $nativeDestDirString.zip")
 
-    fun addJarToPath() = runTemplate("Adding native-build.jar to $nativeDirString...",
-        "Copy-Item '$jarPath' -Destination $jarFile -Force")
+    /**
+     * Adds the current utility into path if the current runtime
+     * is not running from `C:\kotlin-native\native-build.jar`.
+     *
+     * @author Joshua Kent
+     */
+    fun addJarToPath() {
+        if (jarPath != jarFile) {
+            runTemplate("Adding native-build.jar to $nativeDirString...",
+                    "Copy-Item '$jarPath' -Destination $jarFile -Force")
+        }
+    }
 
+    /**
+     * Writes info to `C:\kotlin-native\native-build.bat` to be able to run `native-build` in path.
+     *
+     * @author Joshua Kent
+     */
     fun appendToBatFile() {
         val newBatFile = batFile.createNewFile()
 
@@ -94,13 +132,26 @@ object Build {
      *
      * Thanks to Chris Dent's answer here:
      * https://stackoverflow.com/questions/39010405/powershell-how-to-delete-a-path-in-the-path-environment-variable
+     *
+     * @author Joshua Kent
      */
     fun removeOldVersionPaths() = runTemplate("Removing outdated paths if they exists...",
         "[Environment]::SetEnvironmentVariable('Path', (([Environment]::GetEnvironmentVariable('Path', 'User').Split(';') -NotMatch '$nDDVS_ps1') -Join ';'), 'User')")
 
+    /**
+     * Adds the new Kotlin/Native version to path.
+     *
+     * @author Joshua Kent
+     */
     fun addNewVersionToPath() = runTemplate("Adding new Kotlin/Native version to path...",
         "[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';$nativeDestDirString\\bin', 'User')")
 
+    /**
+     * Adds `C:\kotlin-native` to path if it is not already in path.
+     *
+     * @author Joshua Kent
+     */
     fun addBaseToPath() = runTemplate("Adding C:\\kotlin-native to path if it isn't already added...",
         "${'$'}path = [Environment]::GetEnvironmentVariable('Path', 'User'); if (!(${'$'}path.Split(';') | Where-Object {${'$'}_ -eq 'C:\\kotlin-native'})) {[Environment]::SetEnvironmentVariable('Path', ${'$'}path + ';C:\\kotlin-native', 'User')}")
+
 }
