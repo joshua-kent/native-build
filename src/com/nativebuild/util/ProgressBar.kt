@@ -17,6 +17,7 @@
 package com.nativebuild.util
 
 import java.io.File
+import kotlin.math.pow
 
 /**
  * Gets the size of every item in a directory.
@@ -49,17 +50,31 @@ private fun sizeOfDirectory(directory: File): Long {
  * @param barLength The length of the bar (default: 64)
  * @param updateWait How long to wait between updates in milliseconds (default: 500)
  * @param reverse Reverses the progress bar (mainly used for when deleting something) (default: false)
+ * @param unitMeasured What units the progress bar should be measured in. Valid values:
+ * 'B', 'KB', 'MB', 'GB', null. To omit the units, set `maxValue` in bytes and
+ * set this variable to `null`. (default: null)
  * @return 0 if the progress bar successfully ran
  * @author Joshua Kent
  */
 fun progressBar(process: Process, filePath: String, maxValue: Long,
-                barLength: Int = 64, updateWait: Long = 500, reverse: Boolean = false): Int {
+                barLength: Int = 64, updateWait: Long = 500, reverse: Boolean = false,
+                measuredIn: String? = null): Int {
 
     class ProgressBarException(message: String): Exception(message)
 
     print("[" + ".".repeat(barLength) + "] 0%")
 
     val file = File(filePath)
+
+    // change max value to correct units
+    var MAXVALUE: Long
+    if (measuredIn?.toUpperCase() == "KB") {
+        MAXVALUE = maxValue / 1024
+    } else if (measuredIn?.toUpperCase() == "MB") {
+        MAXVALUE = maxValue / 1048576
+    } else if (measuredIn?.toUpperCase() == "GB") {
+        MAXVALUE = maxValue / 1073741824
+    } else { MAXVALUE = maxValue }
 
     // main progress bar logic
     while (process.isAlive) {
@@ -68,21 +83,31 @@ fun progressBar(process: Process, filePath: String, maxValue: Long,
             if (file.isFile) { file.length() } else { sizeOfDirectory(file) }
         } else { 0 }
 
+        // add units to end (ie. [134KB/5928KB])
+        var endUnits: String
+        when (measuredIn?.toUpperCase()) {
+            "KB" -> currentFileSize /= 1024
+            "MB" -> currentFileSize /= 1048576
+            "GB" -> currentFileSize /= 1073741824
+            !in arrayOf(null, "B") -> throw ProgressBarException(
+                    "Unknown 'measuredIn' value (not 'B', 'KB', 'MB', 'GB', or null).")
+        }
+        endUnits = if (measuredIn != null) {
+            " ($currentFileSize${measuredIn.toUpperCase()}/$MAXVALUE${measuredIn.toUpperCase()})"
+        } else { "" }
+
         // display progress
-        if (currentFileSize >= maxValue) {
-            if (!reverse) {
-                print("\r[" + "#".repeat(barLength) + "] 100%")
-            } else {
-                print("\r[" + ".".repeat(barLength) + "] 0%")
-            }
+        if (currentFileSize >= MAXVALUE) {
+            if (!reverse) { print("\r[" + "#".repeat(barLength) + "] 100%$endUnits") }
+            else { print("\r[" + ".".repeat(barLength) + "] 0%$endUnits") }
         } else {
-            var amountOfHashes = (currentFileSize.toFloat() / maxValue.toFloat() * barLength).toInt()
+            var amountOfHashes = (currentFileSize.toFloat() / MAXVALUE.toFloat() * barLength).toInt()
             var amountOfStops = barLength - amountOfHashes
-            var percentDone = (currentFileSize.toFloat() / maxValue.toFloat() * 100).toInt()
+            var percentDone = (currentFileSize.toFloat() / MAXVALUE.toFloat() * 100).toInt()
             if (!reverse) {
-                print("\r[" + "#".repeat(amountOfHashes) + ".".repeat(amountOfStops) + "] $percentDone%")
+                print("\r[" + "#".repeat(amountOfHashes) + ".".repeat(amountOfStops) + "] $percentDone%$endUnits")
             } else {
-                print("\r[" + "#".repeat(amountOfStops) + ".".repeat(amountOfHashes) + "] ${100 - percentDone}%")
+                print("\r[" + "#".repeat(amountOfStops) + ".".repeat(amountOfHashes) + "] ${100 - percentDone}%$endUnits")
             }
         }
         Thread.sleep(updateWait)

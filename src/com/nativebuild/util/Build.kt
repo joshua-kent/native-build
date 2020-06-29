@@ -88,7 +88,7 @@ object Build {
 
         val proc = runTemplate("Downloading from $targetURL...",
                 "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip", false)
-        progressBar(proc, "$nativeDestDirString.zip", urlFileSize)
+        progressBar(proc, "$nativeDestDirString.zip", urlFileSize, measuredIn = "MB")
     }
 
     /**
@@ -122,7 +122,7 @@ object Build {
             error(exc)
         }
 
-        progressBar(proc, nativeDestDirString, uncompressedZipSize)
+        progressBar(proc, nativeDestDirString, uncompressedZipSize, measuredIn = "MB")
     }
 
     /**

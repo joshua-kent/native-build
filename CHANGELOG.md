@@ -1,6 +1,20 @@
 Changelog
 ===
 
+Version 1.0.2
+---
+
+- Downloading and extracting now use the new progress
+bar feature detailed below.
+- This will be the last update for a while until v1.1,
+which is planned to introduce cross-compatibility.
+
+### `com.nativebuild.progressBar()`
+
+- Progress bars can now display exactly how much
+something is done out of bytes, kilobytes, megabytes
+or gigabytes (i.e. `10KB/148KB`).
+
 Version 1.0.1
 ---
 
