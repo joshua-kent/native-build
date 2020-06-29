@@ -1,6 +1,12 @@
 Changelog
 ===
 
+Version 1.0.1
+---
+
+- Fixed minor bug that caused duplicated semicolons in
+path after removing previous releases from path.
+
 Version 1.0.0
 ---
 

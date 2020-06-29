@@ -172,7 +172,7 @@ object Build {
      * @author Joshua Kent
      */
     fun removeOldVersionPaths() = runTemplate("Removing outdated paths if they exist...",
-        "[Environment]::SetEnvironmentVariable('Path', (([Environment]::GetEnvironmentVariable('Path', 'User').Split(';') -NotMatch '$nDDVS_ps1') -Join ';'), 'User')")
+        "[Environment]::SetEnvironmentVariable('Path', (([Environment]::GetEnvironmentVariable('Path', 'User').Split(';') -NotMatch ';$nDDVS_ps1') -Join ';'), 'User')")
 
     /**
      * Adds the new Kotlin/Native version to path.
