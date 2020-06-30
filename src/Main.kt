@@ -79,7 +79,7 @@ fun main(args: Array<String>) {
 
     if (run) {
         if (!com.nativebuild.TESTING) {
-            println("\n--- These steps usually take a while, please wait. ---\n")
+            println("\n--- Many of these steps usually take a while, please wait. ---\n")
 
             Build.downloadZip()
 

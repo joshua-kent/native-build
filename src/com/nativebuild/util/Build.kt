@@ -130,11 +130,8 @@ object Build {
      *
      * @author Joshua Kent
      */
-    fun deleteZip() {
-        val proc = runTemplate("Deleting temporary .zip file...",
-                "Remove-Item $nativeDestDirString.zip", false)
-        progressBar(proc, "$nativeDestDirString.zip", nativeDestDir.length(), reverse = true)
-    }
+    fun deleteZip() = runTemplate("Deleting temporary .zip file...",
+                "Remove-Item $nativeDestDirString.zip")
 
     /**
      * Adds the current utility into path if the current runtime

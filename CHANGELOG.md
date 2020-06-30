@@ -1,6 +1,43 @@
 Changelog
 ===
 
+Version 1.0.3
+---
+
+#### Released 30 June 2020
+
+---
+
+This will **actually** be the last update until *v1.1*,
+which will introduce Linux compatibility. Also, there
+are a few changes to how the changelog is formatted.
+The changelog will no longer be separated into 
+functions, classes, etc. unless the addition is
+directly to do with the source code. Rather, it will be
+split into *'Changes'*, *'Additions'* and *'Bug-fixes'*,
+with notes like this sometimes above. Furthermore, the
+date of release will be displayed.
+
+### Changes
+
+- Changed the wording of the *'These steps usually
+take a while, please wait.'* sentence to *'Many of
+these steps usually take a while, please wait.'*
+
+- Removed progress bar when deleting file as it does
+not show any meaningful information.
+
+- Small edits to *README.MD* to clarify that this is
+a non-official application and use better terminology.
+
+#### `com.nativebuild.ProgressBar()`
+
+- Shortened source code.
+
+### Bug-fixes
+
+- Minor bug fix to properly clear the output stream.
+
 Version 1.0.2
 ---
 

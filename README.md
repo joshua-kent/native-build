@@ -1,15 +1,17 @@
 Kotlin/Native Builder
 =====================
 
-This application makes it simpler to update the
-Kotlin/Native compiler, by building based off 
-your Kotlin Java compiler version.
+This non-official application makes it simpler to
+update the Kotlin/Native compiler by building based off
+your Kotlin Java compiler version and skipping all the
+tedious stuff.
 
 Prerequisites
 -------------
 
 You need to install Java Runtime Environment and
-the Kotlin Java Runtime Compiler to run this program.
+the Kotlin Compiler (check if you can run `kotlinc-jvm`)
+to run this program.
 
 Install and run
 ---------------

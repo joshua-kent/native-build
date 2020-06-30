@@ -77,6 +77,9 @@ fun progressBar(process: Process, filePath: String, maxValue: Long,
     } else { MAXVALUE = maxValue }
 
     // main progress bar logic
+    var lastBarLength = 0
+    var barOutput = ""
+    var excess = ""
     while (process.isAlive) {
         // get file length depending on if it is a file or directory
         var currentFileSize = if (file.exists()) {
@@ -96,22 +99,33 @@ fun progressBar(process: Process, filePath: String, maxValue: Long,
             " ($currentFileSize${measuredIn.toUpperCase()}/$MAXVALUE${measuredIn.toUpperCase()})"
         } else { "" }
 
-        // display progress
+        /* display progress */
+
+        var amountOfHashes = (currentFileSize.toFloat() / MAXVALUE.toFloat() * barLength).toInt()
+        var amountOfStops = barLength - amountOfHashes
+        var percentDone = (currentFileSize.toFloat() / MAXVALUE.toFloat() * 100).toInt()
+
+        lastBarLength = barOutput.length
         if (currentFileSize >= MAXVALUE) {
-            if (!reverse) { print("\r[" + "#".repeat(barLength) + "] 100%$endUnits") }
-            else { print("\r[" + ".".repeat(barLength) + "] 0%$endUnits") }
-        } else {
-            var amountOfHashes = (currentFileSize.toFloat() / MAXVALUE.toFloat() * barLength).toInt()
-            var amountOfStops = barLength - amountOfHashes
-            var percentDone = (currentFileSize.toFloat() / MAXVALUE.toFloat() * 100).toInt()
             if (!reverse) {
-                print("\r[" + "#".repeat(amountOfHashes) + ".".repeat(amountOfStops) + "] $percentDone%$endUnits")
+                barOutput = "\r[" + "#".repeat(barLength) + "] 100%$endUnits"
             } else {
-                print("\r[" + "#".repeat(amountOfStops) + ".".repeat(amountOfHashes) + "] ${100 - percentDone}%$endUnits")
+                barOutput = "\r[" + ".".repeat(barLength) + "] 0%$endUnits"
+            }
+        } else {
+            if (!reverse) {
+                barOutput = "\r[" + "#".repeat(amountOfHashes) + ".".repeat(amountOfStops) + "] $percentDone%$endUnits"
+            } else {
+                barOutput = "\r[" + "#".repeat(amountOfStops) + ".".repeat(amountOfHashes) + "] ${100 - percentDone}%$endUnits"
             }
         }
+
+        // excess is to make sure that the entire stream of the current line gets wiped
+        excess = if (barOutput.length < lastBarLength) { " ".repeat(lastBarLength - barOutput.length) } else { "" }
+        print("\r$excess" + barOutput)
+
         Thread.sleep(updateWait)
     }
-    print("\r")
+    print("\r" + " ".repeat(barOutput.length) + "\r")
     return 0
 }
