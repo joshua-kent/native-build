@@ -141,8 +141,8 @@ object Build {
     fun deleteZip() {
         println(nativeDestZipString)
         try {
-            if (nativeDestZip.exists()) {
-                nativeDestZip.delete()
+            while (nativeDestZip.exists()) {
+                print(nativeDestZip.delete())
             }
         } catch (exc: IOException) {
             error(exc)

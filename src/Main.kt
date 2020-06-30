@@ -81,20 +81,18 @@ fun main(args: Array<String>) {
         if (!com.nativebuild.TESTING) {
             println("\n--- Many of these steps usually take a while, please wait. ---\n")
 
-            /*
+
             Build.downloadZip()
 
             // deleting previous installation if exists
             if (destExists) Build.removeOldInstallation()
 
-             */
             // extracts .zip file to folder
             Build.extractZip()
 
             // deletes .zip file
             Build.deleteZip()
 
-            /*
             // adding .jar file to C:\kotlin-native
             Build.addJarToPath()
 
@@ -112,12 +110,15 @@ fun main(args: Array<String>) {
             // adding C:\kotlin-native to path
             Build.addBaseToPath()
 
-             */
+
             // ending statements
             println("\nIf a previous installation exists, it will not have been uninstalled, but it may have been removed from user path.")
             println("If you want to run native-build again, run 'native-build' in the command line (this will only work after restart)")
         }
     }
+
+    Build.extractZip()
+    Build.deleteZip()
 
     exitProcess(0)
     // to avoid menu -> license -> menu -> license -> yes, completing then returning to first menu screen.

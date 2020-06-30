@@ -130,6 +130,6 @@ fun progressBar(process: Process, filePath: String, maxValue: Long,
     }
 
     print("\r" + " ".repeat(barOutput.length) + "\r")
-    process.destroy()
+    //TODO: FIX ZIP FILES BEING UNDELETABLE (LOOK INTO java.io.ZipFile etc)
     return 0
 }
