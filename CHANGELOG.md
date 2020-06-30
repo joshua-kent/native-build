@@ -27,7 +27,7 @@ these steps usually take a while, please wait.'*
 - Removed progress bar when deleting file as it does
 not show any meaningful information.
 
-- Small edits to *README.MD* to clarify that this is
+- Small edits to *README.md* to clarify that this is
 a non-official application and use better terminology.
 
 #### `com.nativebuild.ProgressBar()`
