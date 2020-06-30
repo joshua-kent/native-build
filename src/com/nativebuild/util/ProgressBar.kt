@@ -30,11 +30,13 @@ import kotlin.math.pow
  */
 private fun sizeOfDirectory(directory: File): Long {
     var length = 0L
-    for (file in directory.listFiles()) {
-        if (file.isFile) {
-            length += file.length()
-        } else { // if it is a directory
-            length += sizeOfDirectory(file) // test that directory's size then add it
+    if (directory.listFiles() != null) {
+        for (file in directory.listFiles()) {
+            if (file.isFile) {
+                length += file.length()
+            } else if (file.isDirectory) { // if it is a directory
+                length += sizeOfDirectory(file) // test that directory's size then add it
+            }
         }
     }
 
@@ -126,6 +128,8 @@ fun progressBar(process: Process, filePath: String, maxValue: Long,
 
         Thread.sleep(updateWait)
     }
+
     print("\r" + " ".repeat(barOutput.length) + "\r")
+    process.destroy()
     return 0
 }

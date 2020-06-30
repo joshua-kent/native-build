@@ -38,6 +38,10 @@ object Build {
     private val nativeDestDirString = "${nativeDestDirVersionlessString}${KotlinVersion.CURRENT}"
     /** The same as `nativeDestDirString`, but as a `java.io.File` object. */
     val nativeDestDir = File(nativeDestDirString) // not private as used by main()
+    /** The zip file where the source is extracted to. */
+    private val nativeDestZipString = "$nativeDestDirString.zip"
+    /** The same as `nativeDestZipString`, but as a `java.io.File` object. */
+    val nativeDestZip = File(nativeDestZipString)
     /** The path where this utility will be installed and visible to path. */
     private const val jarFile = "${nativeDirString}\\native-build.jar"
     /** The URL where Kotlin/Native will be downloaded from. */
@@ -70,7 +74,9 @@ object Build {
         val commandArr = arrayOf("powershell.exe", "-Command", "\"" + command + "\"")
         val proc = this.javaRuntime.exec(commandArr)
         if (waitFor) proc.waitFor()
-        return proc
+        val procValue = proc
+        if (waitFor) proc.destroy()
+        return procValue
     }
 
     /**
@@ -130,8 +136,18 @@ object Build {
      *
      * @author Joshua Kent
      */
-    fun deleteZip() = runTemplate("Deleting temporary .zip file...",
-                "Remove-Item $nativeDestDirString.zip")
+    //fun deleteZip() = runTemplate("Deleting temporary .zip file...",
+    //"Remove-Item '$nativeDestDirString.zip' -Force")
+    fun deleteZip() {
+        println(nativeDestZipString)
+        try {
+            if (nativeDestZip.exists()) {
+                nativeDestZip.delete()
+            }
+        } catch (exc: IOException) {
+            error(exc)
+        }
+    }
 
     /**
      * Adds the current utility into path if the current runtime

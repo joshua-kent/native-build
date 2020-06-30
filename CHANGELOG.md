@@ -1,6 +1,15 @@
 Changelog
 ===
 
+Version 1.1 [DEVELOPMENT BUILD]
+---
+
+#### Released [DATE]
+
+### Bug-fixes
+
+- .zip file now successfully deletes.
+
 Version 1.0.3
 ---
 
