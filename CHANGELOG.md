@@ -6,6 +6,17 @@ Version 1.1 [DEVELOPMENT BUILD]
 
 #### Released [DATE]
 
+### Changes
+
+- License information is now displayed in the source
+code of *native-build.bat*.
+
+#### `com.nativebuild.progressBar()`
+
+- No longer loops and displays once.
+- There is now a maximum bar length of 100 to lie
+within the array size limit.
+
 ### Bug-fixes
 
 - .zip file now successfully deletes.

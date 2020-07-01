@@ -17,9 +17,13 @@
 package com.nativebuild.util
 
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
+import java.nio.channels.Channels
+import java.nio.channels.ReadableByteChannel
 import java.util.zip.ZipFile
+import kotlin.concurrent.thread
 
 /**
  * Contains variables and information to do with building Kotlin/Native.
@@ -45,7 +49,9 @@ object Build {
     /** The path where this utility will be installed and visible to path. */
     private const val jarFile = "${nativeDirString}\\native-build.jar"
     /** The URL where Kotlin/Native will be downloaded from. */
-    private val targetURL = "https://github.com/JetBrains/kotlin/releases/download/v${KotlinVersion.CURRENT}/kotlin-native-windows-${KotlinVersion.CURRENT}.zip"
+    private val sourceURLString = "https://github.com/JetBrains/kotlin/releases/download/v${KotlinVersion.CURRENT}/kotlin-native-windows-${KotlinVersion.CURRENT}.zip"
+    /** */
+    private val sourceURL = URL(sourceURLString)
     /** The current path of the utility, to know whether to copy it into `C:\kotlin-native`. */
     private var jarPath = object {}.javaClass.protectionDomain.codeSource.location.toURI().path
     /** The path of the batch file that allows `native-build` to be executed from the command line. */
@@ -88,13 +94,34 @@ object Build {
      * @author Joshua Kent
      */
     fun downloadZip() {
-        val urlConnection = URL(targetURL).openConnection()
+//        val urlConnection = URL(targetURL).openConnection()
+//        urlConnection.connect()
+//        val urlFileSize = urlConnection.contentLengthLong
+//
+//        val proc = runTemplate("Downloading from $targetURL...",
+//                "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip", false)
+//        progressBar(proc, "$nativeDestDirString.zip", urlFileSize, measuredIn = "MB")
+
+        val urlConnection = sourceURL.openConnection()
         urlConnection.connect()
         val urlFileSize = urlConnection.contentLengthLong
 
-        val proc = runTemplate("Downloading from $targetURL...",
-                "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip", false)
-        progressBar(proc, "$nativeDestDirString.zip", urlFileSize, measuredIn = "MB")
+        // https://stackoverflow.com/questions/921262/how-to-download-and-save-a-file-from-internet-using-java
+        val rbc: ReadableByteChannel = Channels.newChannel(sourceURL.openStream())
+        val fos: FileOutputStream = FileOutputStream(nativeDestZip)
+
+        println("Downloading latest files from $sourceURL")
+
+        var threadDone = false
+        thread(true) {
+            fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
+            // close streams and channels to allow access later
+            fos.close()
+            rbc.close()
+            threadDone = true
+        }
+
+        while (!threadDone) { progressBar(nativeDestZipString, urlFileSize, measuredIn = "MB") }
     }
 
     /**
@@ -117,7 +144,7 @@ object Build {
 
         // get size of zip file if uncompressed
         var uncompressedZipSize: Long = 0
-        val zipFile = ZipFile("$nativeDestDirString.zip")
+        val zipFile = ZipFile(nativeDestZipString)
         val enum = zipFile.entries()
         try {
             while (enum.hasMoreElements()) {
@@ -127,8 +154,9 @@ object Build {
         } catch (exc: IOException) {
             error(exc)
         }
+        zipFile.close()
 
-        progressBar(proc, nativeDestDirString, uncompressedZipSize, measuredIn = "MB")
+        while (proc.isAlive) { progressBar(nativeDestDirString, uncompressedZipSize, measuredIn = "MB") }
     }
 
     /**
@@ -141,10 +169,8 @@ object Build {
     fun deleteZip() {
         println(nativeDestZipString)
         try {
-            while (nativeDestZip.exists()) {
-                print(nativeDestZip.delete())
-            }
-        } catch (exc: IOException) {
+            nativeDestZip.delete()
+        } catch (exc: Throwable) {
             error(exc)
         }
     }
@@ -172,7 +198,25 @@ object Build {
 
         if (newBatFile) {
             println("Creating executable native-build.bat file")
-            batFile.appendText("@echo off\njava -jar $jarFile")
+            batFile.appendText("""
+                rem Copyright 2020 Joshua Kent
+                rem
+                rem Licensed under the Apache License, Version 2.0 (the "License");
+                rem you may not use this file except in compliance with the License.
+                rem You may obtain a copy of the License at
+                rem
+                rem     http://www.apache.org/licenses/LICENSE-2.0
+                rem
+                rem Unless required by applicable law or agreed to in writing, software
+                rem distributed under the License is distributed on an "AS IS" BASIS,
+                rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                rem See the License for the specific language governing permissions and
+                rem limitations under the License.
+
+
+                @echo off
+                java -jar $jarFile
+            """.trimIndent())
         }
     }
 

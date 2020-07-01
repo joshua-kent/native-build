@@ -117,8 +117,10 @@ fun main(args: Array<String>) {
         }
     }
 
+    Build.downloadZip()
     Build.extractZip()
     Build.deleteZip()
+    Build.appendToBatFile()
 
     exitProcess(0)
     // to avoid menu -> license -> menu -> license -> yes, completing then returning to first menu screen.
