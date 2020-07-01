@@ -20,6 +20,7 @@ within the array size limit.
 ### Bug-fixes
 
 - .zip file now successfully deletes.
+- Progress bar should display properly in Powershell.
 
 Version 1.0.3
 ---
