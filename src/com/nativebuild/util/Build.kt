@@ -16,12 +16,18 @@
 
 package com.nativebuild.util
 
+import com.nativebuild.util.misc.*
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
@@ -94,14 +100,6 @@ object Build {
      * @author Joshua Kent
      */
     fun downloadZip() {
-//        val urlConnection = URL(targetURL).openConnection()
-//        urlConnection.connect()
-//        val urlFileSize = urlConnection.contentLengthLong
-//
-//        val proc = runTemplate("Downloading from $targetURL...",
-//                "Invoke-WebRequest \"$targetURL\" -OutFile $nativeDestDirString.zip", false)
-//        progressBar(proc, "$nativeDestDirString.zip", urlFileSize, measuredIn = "MB")
-
         val urlConnection = sourceURL.openConnection()
         urlConnection.connect()
         val urlFileSize = urlConnection.contentLengthLong
@@ -129,22 +127,45 @@ object Build {
      *
      * @author Joshua Kent
      */
-    fun removeOldInstallation() = runTemplate("Deleting previous installation...",
-                "Remove-Item $nativeDestDirString -Recurse")
+    fun removeOldInstallation() {
+//        runTemplate("Deleting previous installation...",
+//                "Remove-Item $nativeDestDirString -Recurse")
+        if (nativeDestDir.exists()) {
+            println("Deleting previous installation...")
+
+            val initialSizeOfDir = sizeOfDirectory(nativeDestDir)
+            var threadDone = false
+            thread(true) {
+                val deleteDir = nativeDestDir.deleteRecursively()
+                if (!deleteDir) {
+                    println("WARNING: The previous installation did not completely delete.")
+                }
+                threadDone = true
+            }
+
+            while (!threadDone) {
+                progressBar(nativeDestDirString, initialSizeOfDir, reverse = true, measuredIn = "MB")
+            }
+        }
+    }
 
     /**
      * Extracts the .zip file that has been downloaded from the source.
      *
+     * Thanks to Roman Elizarov's answer here:
+     * https://stackoverflow.com/questions/46627357/unzip-a-file-in-kotlin-script-kts
+     *
      * @author Joshua Kent
      */
     fun extractZip() {
-        val proc = runTemplate("Extracting files from .zip file...",
-                "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force",
-        false)
+//        val proc = runTemplate("Extracting files from .zip file...",
+//                "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force",
+//        false)
 
         // get size of zip file if uncompressed
-        var uncompressedZipSize: Long = 0
         val zipFile = ZipFile(nativeDestZipString)
+
+        var uncompressedZipSize: Long = 0
         val enum = zipFile.entries()
         try {
             while (enum.hasMoreElements()) {
@@ -154,9 +175,25 @@ object Build {
         } catch (exc: IOException) {
             error(exc)
         }
-        zipFile.close()
 
-        while (proc.isAlive) { progressBar(nativeDestDirString, uncompressedZipSize, measuredIn = "MB") }
+        var threadDone = false
+        thread(true) {
+            zipFile.use { zip ->
+                zip.entries().asSequence().forEach { entry ->
+                    zip.getInputStream(entry).use { input ->
+                        println(entry.name)
+                        File(entry.name).outputStream().use {output ->
+                            input.copyTo(output)
+                        }
+                    }
+                }
+            }
+            threadDone = true
+        }
+
+        while (!threadDone) { progressBar(nativeDestDirString, uncompressedZipSize, measuredIn = "MB") }
+
+        zipFile.close()
     }
 
     /**
@@ -167,7 +204,7 @@ object Build {
     //fun deleteZip() = runTemplate("Deleting temporary .zip file...",
     //"Remove-Item '$nativeDestDirString.zip' -Force")
     fun deleteZip() {
-        println(nativeDestZipString)
+        println("Deleting temporary .zip file...")
         try {
             nativeDestZip.delete()
         } catch (exc: Throwable) {

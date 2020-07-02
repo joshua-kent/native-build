@@ -16,15 +16,14 @@
 
 package com.nativebuild
 
-const val VERSION = "1.1-pre14"
+const val VERSION = "1.1-pre17"
 object LastUpdated {
     const val DATE = "02 July 2020"
-    const val TIME = "17:33 UTC+1"
+    const val TIME = "19:14 UTC+1"
     const val FULL = "$DATE $TIME"
 }
 const val FULLVERSION = "$VERSION at ${LastUpdated.FULL}"
 const val AUTHOR = "Joshua Kent"
-/** Set to `true` to skip anything currently building in `com.nativebuild.main()` */
 const val TESTING = "DEV" // set to DEV, BETA or STABLE
 const val REPO = "https://github.com/joshua-kent/native-build"
 const val LICENSE = """                                 Apache License

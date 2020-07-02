@@ -17,31 +17,7 @@
 package com.nativebuild.util
 
 import java.io.File
-import kotlin.math.pow
-
-/**
- * Gets the size of every item in a directory.
- *
- * Thanks to Tendayi Mawushe's answer here:
- * https://stackoverflow.com/questions/2149785/get-size-of-folder-or-file
- *
- * @param directory The directory to be tested
- * @author Joshua Kent
- */
-private fun sizeOfDirectory(directory: File): Long {
-    var length = 0L
-    if (directory.listFiles() != null) {
-        for (file in directory.listFiles()) {
-            if (file.isFile) {
-                length += file.length()
-            } else if (file.isDirectory) { // if it is a directory
-                length += sizeOfDirectory(file) // test that directory's size then add it
-            }
-        }
-    }
-
-    return length
-}
+import com.nativebuild.util.misc.*
 
 /**
  * Creates a progress bar based on several parameters.
@@ -51,7 +27,7 @@ private fun sizeOfDirectory(directory: File): Long {
  * @param barLength The length of the bar. Maximum length is 128 (default: 64)
  * @param updateWait How long to wait between updates in milliseconds (default: 500)
  * @param reverse Reverses the progress bar (mainly used for when deleting something) (default: false)
- * @param unitMeasured What units the progress bar should be measured in. Valid values:
+ * @param measuredIn What units the progress bar should be measured in. Valid values:
  * 'B', 'KB', 'MB', 'GB', null. To omit the units, set `maxValue` in bytes and
  * set this variable to `null`. (default: null)
  * @return 0 if the progress bar successfully ran

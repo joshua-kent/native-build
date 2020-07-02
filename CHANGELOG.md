@@ -29,10 +29,16 @@ with development builds.
 - There is now a maximum bar length of 100 to lie
 within the array size limit.
 
+#### `com.nativebuild.util.misc.sizeOfDirectory()`
+
+- Moved to
+*src/com/nativebuild/util/misc/sizeOfDirectory* in
+source code.
+
 ### Bug-fixes
 
 - .zip file now successfully deletes.
-- Progress bar should display properly in Powershell.
+- Progress bar should display properly in PowerShell.
 
 Version 1.0.3
 ---

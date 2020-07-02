@@ -68,7 +68,8 @@ fun startMenu(redoing: Boolean = false): Boolean {
  * @author Joshua Kent
  */
 fun main(args: Array<String>) {
-    var destExists = Build.nativeDestDir.exists()
+    println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
+    println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
 
     if (com.nativebuild.TESTING == "BUILD") {
         println("""
@@ -90,8 +91,6 @@ fun main(args: Array<String>) {
         """.trimIndent())
     }
 
-    println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
-    println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
     println("Type 'info' at any input prompt to show more information about this utility.")
     println("Type 'license' at any input prompt to show this product's license.\n")
 
@@ -105,7 +104,7 @@ fun main(args: Array<String>) {
             Build.downloadZip()
 
             // deleting previous installation if exists
-            if (destExists) Build.removeOldInstallation()
+            Build.removeOldInstallation()
 
             // extracts .zip file to folder
             Build.extractZip()
