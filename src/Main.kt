@@ -70,6 +70,26 @@ fun startMenu(redoing: Boolean = false): Boolean {
 fun main(args: Array<String>) {
     var destExists = Build.nativeDestDir.exists()
 
+    if (com.nativebuild.TESTING == "BUILD") {
+        println("""
+                    --- WARNING ---
+                    You are currently using a beta build.
+                    This means that experimental features may be enabled,
+                    which may have unexpected consequences.
+                    
+            """.trimIndent())
+    } else if (com.nativebuild.TESTING == "DEV") {
+        println("""
+                    --- WARNING ---
+                    You are currently using a development build.
+                    These builds are not recommended for proper usage
+                    as they are susceptible to unexpected consequences and
+                    often will not work at all. Furthermore, many features
+                    may be disabled to speed up development.
+                    
+        """.trimIndent())
+    }
+
     println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
     println("Type 'info' at any input prompt to show more information about this utility.")
@@ -115,12 +135,12 @@ fun main(args: Array<String>) {
             println("\nIf a previous installation exists, it will not have been uninstalled, but it may have been removed from user path.")
             println("If you want to run native-build again, run 'native-build' in the command line (this will only work after restart)")
         }
-    }
 
-    Build.downloadZip()
-    Build.extractZip()
-    Build.deleteZip()
-    Build.appendToBatFile()
+        Build.downloadZip()
+        Build.extractZip()
+        Build.deleteZip()
+        Build.appendToBatFile()
+    }
 
     exitProcess(0)
     // to avoid menu -> license -> menu -> license -> yes, completing then returning to first menu screen.

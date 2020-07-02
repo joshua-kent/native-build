@@ -11,7 +11,8 @@ Version 1.1 [DEVELOPMENT BUILD]
 ### Additions
 
 - Clarity of whether in a development build,
-pre-release build or stable release.
+beta build or stable release, with
+warnings.
 
 ### Changes
 
@@ -19,6 +20,8 @@ pre-release build or stable release.
 code of *native-build.bat*.
 - References to 'non-official' have been replaced
 with 'unofficial'.
+- Renamed 'build' branch to 'beta', to not be confused
+with development builds.
 
 #### `com.nativebuild.progressBar()`
 
