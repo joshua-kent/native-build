@@ -18,6 +18,7 @@ package com.nativebuild
 
 import com.nativebuild.util.Build
 import com.nativebuild.util.Menu
+import com.nativebuild.util.misc.NativeBuildException
 import kotlin.system.exitProcess
 
 /**
@@ -68,6 +69,10 @@ fun startMenu(redoing: Boolean = false): Boolean {
  * @author Joshua Kent
  */
 fun main(args: Array<String>) {
+    if (com.nativebuild.OS == "other") {
+        throw NativeBuildException("You are running an incompatible operating system (not Windows or Linux).")
+    }
+
     println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
 
@@ -100,7 +105,10 @@ fun main(args: Array<String>) {
         if (com.nativebuild.TESTING != "DEV") {
             println("\n--- Many of these steps usually take a while, please wait. ---\n")
 
+            // deletes previously installed zip file (mainly for development)
+            Build.deletePreviousZip()
 
+            // downloads zip file from source
             Build.downloadZip()
 
             // deleting previous installation if exists

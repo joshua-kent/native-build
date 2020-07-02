@@ -16,16 +16,25 @@
 
 package com.nativebuild
 
-const val VERSION = "1.1-beta2"
+import org.apache.commons.lang3.SystemUtils
+
+const val VERSION = "1.1-beta4"
 object LastUpdated {
     const val DATE = "02 July 2020"
-    const val TIME = "21:30 UTC+1"
+    const val TIME = "23:28 UTC+1"
     const val FULL = "$DATE $TIME"
 }
 const val FULLVERSION = "$VERSION at ${LastUpdated.FULL}"
 const val AUTHOR = "Joshua Kent"
 const val TESTING = "BETA" // set to DEV, BETA or STABLE
 const val REPO = "https://github.com/joshua-kent/native-build"
+private fun OS(): String {
+    if (SystemUtils.IS_OS_WINDOWS) { return "windows" }
+    else if (SystemUtils.IS_OS_LINUX) { return "linux" }
+    else { return "other" }
+}
+val OS get() = OS()
+
 const val LICENSE = """                                 Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

@@ -1,7 +1,7 @@
 Changelog
 ===
 
-Version 1.1 [DEVELOPMENT BUILD]
+Version 1.1 [BETA BUILD]
 ---
 
 #### Released [DATE]
@@ -13,6 +13,11 @@ Version 1.1 [DEVELOPMENT BUILD]
 - Clarity of whether in a development build,
 beta build or stable release, with
 warnings.
+- Checks operating system for both internal decisions
+and to check if the current operating system is
+supported (raises an error if otherwise).
+- Errors now use
+`com.nativebuild.util.misc.NativeBuildException`.
 
 ### Changes
 

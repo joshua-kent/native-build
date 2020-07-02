@@ -16,7 +16,8 @@
 
 package com.nativebuild.util
 
-import com.nativebuild.util.misc.*
+import com.nativebuild.util.misc.sizeOfDirectory
+import com.nativebuild.util.misc.NativeBuildException
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -90,6 +91,24 @@ object Build {
         val procValue = proc
         if (waitFor) proc.destroy()
         return procValue
+    }
+
+    /**
+     * Deletes a previous installation of the .zip file to be installed
+     * if it exists.
+     *
+     * @author Joshua Kent
+     */
+    fun deletePreviousZip() {
+        if (nativeDestZip.exists()) {
+            println("Deleting previously installed .zip file ($nativeDestZipString)...")
+
+            try {
+                nativeDestZip.delete()
+            } catch (exc: Throwable) {
+                throw NativeBuildException(exc.message!!)
+            }
+        }
     }
 
     /**
@@ -170,7 +189,7 @@ object Build {
                 uncompressedZipSize += zipEntry.size
             }
         } catch (exc: IOException) {
-            error(exc)
+            throw NativeBuildException(exc.message!!)
         }
 
         var threadDone = false
@@ -244,6 +263,8 @@ object Build {
         if (newBatFile) {
             println("Creating executable native-build.bat file")
             batFile.appendText("""
+                @echo off
+                
                 rem Copyright 2020 Joshua Kent
                 rem
                 rem Licensed under the Apache License, Version 2.0 (the "License");
@@ -259,7 +280,6 @@ object Build {
                 rem limitations under the License.
 
 
-                @echo off
                 java -jar $jarFile
             """.trimIndent())
         }

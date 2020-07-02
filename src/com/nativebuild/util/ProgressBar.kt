@@ -37,7 +37,7 @@ fun progressBar(filePath: String, maxValue: Long,
                 barLength: Int = 64, updateWait: Long = 500, reverse: Boolean = false,
                 measuredIn: String? = null): Int {
 
-    class ProgressBarException(message: String): Exception(message)
+    class ProgressBarException(message: String): NativeBuildException(message)
 
     if (barLength > 100) { throw ProgressBarException("Maximum bar length (100) exceeded.") }
 
