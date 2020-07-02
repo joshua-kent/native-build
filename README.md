@@ -1,7 +1,7 @@
 Kotlin/Native Builder
 =====================
 
-This unofficial application makes it simpler to
+This unofficial application makes it easier to
 update the Kotlin/Native compiler by building based off
 your Kotlin Java compiler version and skipping all the
 tedious stuff.
