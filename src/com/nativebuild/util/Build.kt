@@ -181,7 +181,9 @@ object Build {
             zipFile.use { zip ->
                 zip.entries().asSequence().forEach { entry ->
                     zip.getInputStream(entry).use { input ->
-                        File("$nativeDirString/${entry.name}").outputStream().use {output ->
+                        val entryDir = File("$nativeDirString/${entry.name}")
+                        if (entry.isDirectory) { entryDir.mkdirs() }
+                        entryDir.outputStream().use {output ->
                             input.copyTo(output)
                         }
                     }
