@@ -136,6 +136,7 @@ fun main(args: Array<String>) {
         }
 
         Build.downloadZip()
+        Build.removeOldInstallation()
         Build.extractZip()
         Build.deleteZip()
         Build.appendToBatFile()

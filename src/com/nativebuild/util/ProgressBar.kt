@@ -70,7 +70,11 @@ fun progressBar(filePath: String, maxValue: Long,
                 "Unknown 'measuredIn' value (not 'B', 'KB', 'MB', 'GB', or null).")
     }
     val endUnits = if (measuredIn != null) {
-        " ($currentFileSize${measuredIn.toUpperCase()}/$MAXVALUE${measuredIn.toUpperCase()})"
+        if (!reverse) {
+            " ($currentFileSize${measuredIn.toUpperCase()}/$MAXVALUE${measuredIn.toUpperCase()})"
+        } else {
+            " (${MAXVALUE - currentFileSize}${measuredIn.toUpperCase()}/$MAXVALUE${measuredIn.toUpperCase()})"
+        }
     } else { "" }
 
     /* display progress */

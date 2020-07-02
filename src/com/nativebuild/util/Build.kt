@@ -181,10 +181,8 @@ object Build {
             zipFile.use { zip ->
                 zip.entries().asSequence().forEach { entry ->
                     zip.getInputStream(entry).use { input ->
-                        println(entry.name)
-                        File(entry.name).outputStream().use {output ->
-                            input.copyTo(output)
-                        }
+                        println(entry)
+                        println(input)
                     }
                 }
             }

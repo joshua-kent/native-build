@@ -22,6 +22,9 @@ code of *native-build.bat*.
 with 'unofficial'.
 - Renamed 'build' branch to 'beta', to not be confused
 with development builds.
+- Progress bar while deleting old installations now
+properly measure the amount that has been deleted
+rather than the amount that is still there.
 
 #### `com.nativebuild.progressBar()`
 
