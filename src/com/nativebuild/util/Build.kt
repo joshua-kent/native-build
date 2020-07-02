@@ -180,14 +180,16 @@ object Build {
         thread(true) {
             zipFile.use { zip ->
                 zip.entries().asSequence().forEach { entry ->
+                    @Suppress("IMPLICIT_CAST_TO_ANY")
                     zip.getInputStream(entry).use { input ->
                         val entryDir = File("$nativeDirString/${entry.name}")
-                        if (entry.isDirectory) { entryDir.mkdirs() }
-                        entryDir.outputStream().use {output ->
-                            input.copyTo(output)
-                            output.close()
+                        if (entry.isDirectory) {
+                            entryDir.mkdirs()
+                        } else {
+                            entryDir.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
                         }
-                        input.close()
                     }
                 }
             }
