@@ -185,7 +185,9 @@ object Build {
                         if (entry.isDirectory) { entryDir.mkdirs() }
                         entryDir.outputStream().use {output ->
                             input.copyTo(output)
+                            output.close()
                         }
+                        input.close()
                     }
                 }
             }
