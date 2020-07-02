@@ -39,9 +39,9 @@ import kotlin.concurrent.thread
 object Build {
 
     /** The path where Kotlin/Native and this utility will be stored. */
-    private const val nativeDirString = "C:\\kotlin-native"
+    private const val nativeDirString = "C:/kotlin-native"
     /** Used as a template for where Kotlin/Native will be installed. */
-    private const val nativeDestDirVersionlessString = "${nativeDirString}\\kotlin-native-windows-"
+    private const val nativeDestDirVersionlessString = "${nativeDirString}/kotlin-native-windows-"
     /** The same as `nativeDestDirVersionlessString` but compatible with regex.*/
     private const val nDDVS_ps1 = "C:\\\\kotlin-native\\\\kotlin-native-windows-" //
     /** The path where Kotlin/Native will be installed. */
@@ -53,7 +53,7 @@ object Build {
     /** The same as `nativeDestZipString`, but as a `java.io.File` object. */
     val nativeDestZip = File(nativeDestZipString)
     /** The path where this utility will be installed and visible to path. */
-    private const val jarFile = "${nativeDirString}\\native-build.jar"
+    private const val jarFile = "${nativeDirString}/native-build.jar"
     /** The URL where Kotlin/Native will be downloaded from. */
     private val sourceURLString = "https://github.com/JetBrains/kotlin/releases/download/v${KotlinVersion.CURRENT}/kotlin-native-windows-${KotlinVersion.CURRENT}.zip"
     /** */
@@ -61,7 +61,7 @@ object Build {
     /** The current path of the utility, to know whether to copy it into `C:\kotlin-native`. */
     private var jarPath = object {}.javaClass.protectionDomain.codeSource.location.toURI().path
     /** The path of the batch file that allows `native-build` to be executed from the command line. */
-    private const val batFileString = "${nativeDirString}\\native-build.bat"
+    private const val batFileString = "${nativeDirString}/native-build.bat"
     /** The same as `batFileString`, but as a `java.io.File` object. */
     private val batFile = File(batFileString)
     /** Accesses the current Java runtime, which can be used to run processes.*/
@@ -181,10 +181,9 @@ object Build {
             zipFile.use { zip ->
                 zip.entries().asSequence().forEach { entry ->
                     zip.getInputStream(entry).use { input ->
-                        println(entry.name)
-//                        File(entry.name).outputStream().use {output ->
-//                            input.copyTo(output)
-//                        }
+                        File("$nativeDirString/${entry.name}").outputStream().use {output ->
+                            input.copyTo(output)
+                        }
                     }
                 }
             }
