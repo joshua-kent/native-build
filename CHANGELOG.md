@@ -43,6 +43,11 @@ source code.
 - .zip file now successfully deletes.
 - Progress bar should display properly in PowerShell.
 
+#### `com.nativebuild.util.misc.sizeOfDirectory()`
+
+- Added protection against errors when searching
+through directories (such as null pointer errors.)
+
 Version 1.0.3
 ---
 
