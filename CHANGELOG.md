@@ -18,6 +18,8 @@ and to check if the current operating system is
 supported (raises an error if otherwise).
 - Errors now use
 `com.nativebuild.util.misc.NativeBuildException`.
+- Now deletes a pre-existing zip file to avoid errors
+if it already exists. (mainly for development)
 
 ### Changes
 
