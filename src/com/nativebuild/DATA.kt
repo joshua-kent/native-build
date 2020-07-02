@@ -16,10 +16,10 @@
 
 package com.nativebuild
 
-const val VERSION = "1.1-beta1"
+const val VERSION = "1.1-beta2"
 object LastUpdated {
     const val DATE = "02 July 2020"
-    const val TIME = "21:27 UTC+1"
+    const val TIME = "21:30 UTC+1"
     const val FULL = "$DATE $TIME"
 }
 const val FULLVERSION = "$VERSION at ${LastUpdated.FULL}"

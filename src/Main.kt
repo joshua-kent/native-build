@@ -134,12 +134,6 @@ fun main(args: Array<String>) {
             println("\nIf a previous installation exists, it will not have been uninstalled, but it may have been removed from user path.")
             println("If you want to run native-build again, run 'native-build' in the command line (this will only work after restart)")
         }
-
-        Build.downloadZip()
-        Build.removeOldInstallation()
-        Build.extractZip()
-        Build.deleteZip()
-        Build.appendToBatFile()
     }
 
     exitProcess(0)
