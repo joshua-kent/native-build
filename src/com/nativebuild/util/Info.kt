@@ -28,7 +28,7 @@ fun displayInfo() {
         Kotlin/Native Builder
         ---------------------
         
-        Kotlin/Native Builder is a non-official utility for easily
+        Kotlin/Native Builder is an unofficial utility for easily
         building the Kotlin/Native compiler and setting it up for
         immediate use without hassle.
         

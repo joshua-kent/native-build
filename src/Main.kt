@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
     val run = startMenu()
 
     if (run) {
-        if (!com.nativebuild.TESTING) {
+        if (com.nativebuild.TESTING != "DEV") {
             println("\n--- Many of these steps usually take a while, please wait. ---\n")
 
 

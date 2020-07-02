@@ -6,10 +6,19 @@ Version 1.1 [DEVELOPMENT BUILD]
 
 #### Released [DATE]
 
+---
+
+### Additions
+
+- Clarity of whether in a development build,
+pre-release build or stable release.
+
 ### Changes
 
 - License information is now displayed in the source
 code of *native-build.bat*.
+- References to 'non-official' have been replaced
+with 'unofficial'.
 
 #### `com.nativebuild.progressBar()`
 
