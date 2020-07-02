@@ -38,6 +38,7 @@ import kotlin.concurrent.thread
  */
 object Build {
 
+    // TODO: Declare variables different for Linux
     /** The path where Kotlin/Native and this utility will be stored. */
     private const val nativeDirString = "C:/kotlin-native"
     /** Used as a template for where Kotlin/Native will be installed. */
@@ -56,7 +57,7 @@ object Build {
     private const val jarFile = "${nativeDirString}/native-build.jar"
     /** The URL where Kotlin/Native will be downloaded from. */
     private val sourceURLString = "https://github.com/JetBrains/kotlin/releases/download/v${KotlinVersion.CURRENT}/kotlin-native-windows-${KotlinVersion.CURRENT}.zip"
-    /** */
+    /** The same as `sourceURLString`, but as a `java.net.URL` object */
     private val sourceURL = URL(sourceURLString)
     /** The current path of the utility, to know whether to copy it into `C:\kotlin-native`. */
     private var jarPath = object {}.javaClass.protectionDomain.codeSource.location.toURI().path
@@ -69,7 +70,6 @@ object Build {
 
     init {
         if (jarPath.startsWith('/')) jarPath = jarPath.drop(1)
-        jarPath = jarPath.replace('/', '\\')
     }
 
     /**
@@ -82,6 +82,7 @@ object Build {
      * @author Joshua Kent
      */
     private fun runTemplate(comment: String, command: String, waitFor: Boolean = true): Process {
+        // TODO: Add version for Linux
         println(comment)
         val commandArr = arrayOf("powershell.exe", "-Command", "\"" + command + "\"")
         val proc = this.javaRuntime.exec(commandArr)
@@ -96,6 +97,8 @@ object Build {
      *
      * Thanks to reflog & Cristian's answer here:
      * https://stackoverflow.com/questions/2983073/how-to-know-the-size-of-a-file-before-downloading-it
+     * And also thanks to dfa's answer here:
+     * https://stackoverflow.com/questions/921262/how-to-download-and-save-a-file-from-internet-using-java
      *
      * @author Joshua Kent
      */
@@ -104,9 +107,8 @@ object Build {
         urlConnection.connect()
         val urlFileSize = urlConnection.contentLengthLong
 
-        // https://stackoverflow.com/questions/921262/how-to-download-and-save-a-file-from-internet-using-java
         val rbc: ReadableByteChannel = Channels.newChannel(sourceURL.openStream())
-        val fos: FileOutputStream = FileOutputStream(nativeDestZip)
+        val fos = FileOutputStream(nativeDestZip)
 
         println("Downloading latest files from $sourceURL")
 
@@ -128,8 +130,6 @@ object Build {
      * @author Joshua Kent
      */
     fun removeOldInstallation() {
-//        runTemplate("Deleting previous installation...",
-//                "Remove-Item $nativeDestDirString -Recurse")
         if (nativeDestDir.exists()) {
             println("Deleting previous installation...")
 
@@ -158,11 +158,8 @@ object Build {
      * @author Joshua Kent
      */
     fun extractZip() {
-//        val proc = runTemplate("Extracting files from .zip file...",
-//                "Expand-Archive -LiteralPath '$nativeDestDirString.zip' -DestinationPath $nativeDirString -Force",
-//        false)
+        println("Extracting files from temporary .zip file to $nativeDestZipString...")
 
-        // get size of zip file if uncompressed
         val zipFile = ZipFile(nativeDestZipString)
 
         var uncompressedZipSize: Long = 0
@@ -206,14 +203,13 @@ object Build {
      *
      * @author Joshua Kent
      */
-    //fun deleteZip() = runTemplate("Deleting temporary .zip file...",
-    //"Remove-Item '$nativeDestDirString.zip' -Force")
     fun deleteZip() {
         println("Deleting temporary .zip file...")
+
         try {
             nativeDestZip.delete()
         } catch (exc: Throwable) {
-            error(exc)
+            println(exc)
         }
     }
 
@@ -225,8 +221,14 @@ object Build {
      */
     fun addJarToPath() {
         if (jarPath != jarFile) {
-            runTemplate("Adding native-build.jar to $nativeDirString...",
-                    "Copy-Item '$jarPath' -Destination $jarFile -Force")
+            val jarPathFile = File(jarPath)
+            val jarFileFile = File(jarFile)
+
+            if (jarPathFile.absolutePath != jarFileFile.absolutePath) {
+                println("Copying executable .jar file to $nativeDirString...")
+
+                jarPathFile.copyTo(jarFileFile, true)
+            }
         }
     }
 
@@ -236,6 +238,7 @@ object Build {
      * @author Joshua Kent
      */
     fun appendToBatFile() {
+        // TODO: Add version for Linux
         val newBatFile = batFile.createNewFile()
 
         if (newBatFile) {
@@ -270,23 +273,32 @@ object Build {
      *
      * @author Joshua Kent
      */
-    fun removeOldVersionPaths() = runTemplate("Removing outdated paths if they exist...",
-        "[Environment]::SetEnvironmentVariable('Path', (([Environment]::GetEnvironmentVariable('Path', 'User').Split(';') -NotMatch ';$nDDVS_ps1') -Join ';'), 'User')")
+    fun removeOldVersionPaths() {
+        // TODO: Add a version for Linux as well (likely with bash)
+        runTemplate("Removing outdated paths if they exist...",
+                "[Environment]::SetEnvironmentVariable('Path', (([Environment]::GetEnvironmentVariable('Path', 'User').Split(';') -NotMatch ';$nDDVS_ps1') -Join ';'), 'User')")
+    }
 
     /**
      * Adds the new Kotlin/Native version to path.
      *
      * @author Joshua Kent
      */
-    fun addNewVersionToPath() = runTemplate("Adding new Kotlin/Native version to path...",
-        "[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';$nativeDestDirString\\bin', 'User')")
+    fun addNewVersionToPath() {
+        // TODO: Add version for Linux
+        runTemplate("Adding new Kotlin/Native version to path...",
+                "[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';$nativeDestDirString\\bin', 'User')")
+    }
 
     /**
      * Adds `C:\kotlin-native` to path if it is not already in path.
      *
      * @author Joshua Kent
      */
-    fun addBaseToPath() = runTemplate("Adding C:\\kotlin-native to path if it isn't already added...",
-        "${'$'}path = [Environment]::GetEnvironmentVariable('Path', 'User'); if (!(${'$'}path.Split(';') | Where-Object {${'$'}_ -eq 'C:\\kotlin-native'})) {[Environment]::SetEnvironmentVariable('Path', ${'$'}path + ';C:\\kotlin-native', 'User')}")
+    fun addBaseToPath() {
+        // TODO: Add version for Linux
+        runTemplate("Adding C:\\kotlin-native to path if it isn't already added...",
+                "${'$'}path = [Environment]::GetEnvironmentVariable('Path', 'User'); if (!(${'$'}path.Split(';') | Where-Object {${'$'}_ -eq 'C:\\kotlin-native'})) {[Environment]::SetEnvironmentVariable('Path', ${'$'}path + ';C:\\kotlin-native', 'User')}")
+    }
 
 }
