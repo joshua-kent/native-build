@@ -18,10 +18,10 @@ package com.nativebuild
 
 import org.apache.commons.lang3.SystemUtils
 
-const val VERSION = "1.1-beta4"
+const val VERSION = "1.1-beta5"
 object LastUpdated {
-    const val DATE = "02 July 2020"
-    const val TIME = "23:28 UTC+1"
+    const val DATE = "03 July 2020"
+    const val TIME = "15:19 UTC+1"
     const val FULL = "$DATE $TIME"
 }
 const val FULLVERSION = "$VERSION at ${LastUpdated.FULL}"

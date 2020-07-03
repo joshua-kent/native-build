@@ -76,12 +76,13 @@ fun main(args: Array<String>) {
     println("Running Kotlin/Native Builder v${com.nativebuild.VERSION}")
     println("Current Kotlin version: ${KotlinVersion.CURRENT}\n")
 
-    if (com.nativebuild.TESTING == "BUILD") {
+    if (com.nativebuild.TESTING == "BETA") {
         println("""
                     --- WARNING ---
                     You are currently using a beta build.
                     This means that experimental features may be enabled,
                     which may have unexpected consequences.
+                    ---------------
                     
             """.trimIndent())
     } else if (com.nativebuild.TESTING == "DEV") {
@@ -92,6 +93,7 @@ fun main(args: Array<String>) {
                     as they are susceptible to unexpected consequences and
                     often will not work at all. Furthermore, many features
                     may be disabled to speed up development.
+                    ---------------
                     
         """.trimIndent())
     }
